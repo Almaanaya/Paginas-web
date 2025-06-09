@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,31 +7,32 @@ using System.Threading.Tasks;
 
 namespace BL
 {
-    public class Municipio
+    public class Colonia
     {
-        public static ML.Result MunicipioGetByIdEstado(int IdEstado)
+        public static ML.Result ColoniaGetByIdMunicipio(int IdMunicipio)
         {
             ML.Result result = new ML.Result();
             try
             {
                 using (DL.AAnayaProgramacionNCapasContext context = new DL.AAnayaProgramacionNCapasContext())
                 {
-                    var query = context.Municipios.FromSqlRaw($"MunicipioGetByIdEstado {IdEstado}").ToList();
+                    var query = context.Colonia.FromSqlRaw($"ColoniaGetByIdMunicipio {IdMunicipio}").ToList();
                     result.Objects = new List<object>();
 
                     if (query != null)
                     {
                         foreach (var obj in query)
                         {
-                            ML.Municipio municipio = new ML.Municipio();
+                            ML.Colonia colonia = new ML.Colonia();
 
-                            municipio.IdMunicipio = obj.IdMunicipio;
-                            municipio.Nombre = obj.Nombre;
+                            colonia.IdColonia = obj.IdColonia;
+                            colonia.Nombre = obj.Nombre;
+                            colonia.CodigoPostal = obj.CodigoPostal;
 
-                            municipio.Estado = new ML.Estado();
-                            municipio.Estado.IdEstado = obj.IdEstado.Value;
+                            colonia.Municipio = new ML.Municipio();
+                            colonia.Municipio.IdMunicipio = obj.IdMunicipio.Value;
 
-                            result.Objects.Add(municipio);
+                            result.Objects.Add(colonia);
 
                         }
                         result.Correct = true;

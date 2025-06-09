@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,32 +7,27 @@ using System.Threading.Tasks;
 
 namespace BL
 {
-    public class Municipio
+    public class Pais
     {
-        public static ML.Result MunicipioGetByIdEstado(int IdEstado)
+        public static ML.Result GetAll()
         {
             ML.Result result = new ML.Result();
             try
             {
                 using (DL.AAnayaProgramacionNCapasContext context = new DL.AAnayaProgramacionNCapasContext())
                 {
-                    var query = context.Municipios.FromSqlRaw($"MunicipioGetByIdEstado {IdEstado}").ToList();
+                    var query = context.Pais.FromSqlRaw("PaisGetAll").ToList();
                     result.Objects = new List<object>();
 
                     if (query != null)
                     {
                         foreach (var obj in query)
                         {
-                            ML.Municipio municipio = new ML.Municipio();
+                            ML.Pais pais = new ML.Pais();
+                            pais.IdPais = obj.IdPais;
+                            pais.Nombre = obj.Nombre;
 
-                            municipio.IdMunicipio = obj.IdMunicipio;
-                            municipio.Nombre = obj.Nombre;
-
-                            municipio.Estado = new ML.Estado();
-                            municipio.Estado.IdEstado = obj.IdEstado.Value;
-
-                            result.Objects.Add(municipio);
-
+                            result.Objects.Add(pais);
                         }
                         result.Correct = true;
                     }
@@ -49,5 +44,6 @@ namespace BL
             }
             return result;
         }
+
     }
 }

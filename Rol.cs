@@ -1,18 +1,49 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DL
+namespace BL
 {
-    public partial class Rol
+    public class Rol
     {
-        public Rol()
+        public static ML.Result GetAll()
         {
-            Usuarios = new HashSet<Usuario>();
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(DL.AAnayaProgramacionNCapasContext context = new DL.AAnayaProgramacionNCapasContext())
+                {
+                    var query = context.Rols.FromSqlRaw("RolGetAll").ToList();
+                    result.Objects = new List<object>();
+                    
+                    if(query != null)
+                    {
+                        foreach(var obj in query)
+                        {
+                            ML.Rol rol = new ML.Rol();
+
+                            rol.IdRol = obj.IdRol;
+                            rol.Nombre = obj.Nombre;
+
+                            result.Objects.Add(rol);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
         }
-
-        public int IdRol { get; set; }
-        public string? Nombre { get; set; }
-
-        public virtual ICollection<Usuario> Usuarios { get; set; }
-    }
+}
 }

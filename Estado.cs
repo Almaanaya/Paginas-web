@@ -1,19 +1,53 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DL
+namespace BL
 {
-    public partial class Estado
+    public class Estado
     {
-        public Estado()
+        public static ML.Result EstadoGetByIdPais(int IdPais)
         {
-            Municipios = new HashSet<Municipio>();
-        }
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(DL.AAnayaProgramacionNCapasContext context = new DL.AAnayaProgramacionNCapasContext())
+                {
+                    var query = context.Estados.FromSqlRaw($"EstadoGetByIdPais {IdPais}" ).ToList();
+                    result.Objects = new List<object>();
 
-        public int IdEstado { get; set; }
-        public string Nombre { get; set; } = null!;
-        public int? IdPais { get; set; }
-        public virtual Pai? IdPaisNavigation { get; set; }
-        public virtual ICollection<Municipio> Municipios { get; set; }
+                    if(query != null)
+                    {
+                        foreach(var obj in query)
+                        {
+                            ML.Estado estado = new ML.Estado();
+
+                            estado.IdEstado = obj.IdEstado;
+                            estado.Nombre = obj.Nombre;
+
+                            estado.Pais = new ML.Pais();
+                            estado.Pais.IdPais = obj.IdPais.Value;
+
+                            result.Objects.Add(estado);
+
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
     }
 }
