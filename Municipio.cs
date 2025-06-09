@@ -1,53 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BL
+namespace ML
 {
     public class Municipio
     {
-        public static ML.Result MunicipioGetByIdEstado(int IdEstado)
-        {
-            ML.Result result = new ML.Result();
-            try
-            {
-                using (DL.AAnayaProgramacionNCapasContext context = new DL.AAnayaProgramacionNCapasContext())
-                {
-                    var query = context.Municipios.FromSqlRaw($"MunicipioGetByIdEstado {IdEstado}").ToList();
-                    result.Objects = new List<object>();
+        public int IdMunicipio { get; set; }
+        public string Nombre { get; set; }
+        public ML.Estado Estado { get; set; }
+        public string MunicipioNombre { get; set; }
+        public List<object> Municipios { get; set; }
 
-                    if (query != null)
-                    {
-                        foreach (var obj in query)
-                        {
-                            ML.Municipio municipio = new ML.Municipio();
-
-                            municipio.IdMunicipio = obj.IdMunicipio;
-                            municipio.Nombre = obj.Nombre;
-
-                            municipio.Estado = new ML.Estado();
-                            municipio.Estado.IdEstado = obj.IdEstado.Value;
-
-                            result.Objects.Add(municipio);
-
-                        }
-                        result.Correct = true;
-                    }
-                    else
-                    {
-                        result.Correct = false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Correct = false;
-                result.ErrorMessage = ex.Message;
-            }
-            return result;
-        }
     }
 }
